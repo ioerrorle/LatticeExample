@@ -2,7 +2,7 @@
 #define LATTICEEXAMPLE_NODE_H
 
 
-#include <QtGui/QVector3D>
+#include <QVector3D>
 
 class Node {
 

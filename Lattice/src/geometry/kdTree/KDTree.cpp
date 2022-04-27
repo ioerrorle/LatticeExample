@@ -12,11 +12,11 @@ Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &ver
     QVector3D minVertex;
     QVector3D maxVertex;
     findRange(vertexIndices, vertices, minVertex, maxVertex);
-    QVector3D sizes = minVertex - maxVertex;
+    QVector3D sizes = maxVertex - minVertex;
     int splitAxis;
-    if (sizes.x() > std::max(sizes.y(), sizes.z())) {
+    if (sizes.x() >= std::max(sizes.y(), sizes.z())) {
         splitAxis = 0;
-    } else if (sizes.y() > std::max(sizes.x(), sizes.z())) {
+    } else if (sizes.y() >= std::max(sizes.x(), sizes.z())) {
         splitAxis = 1;
     } else {
         splitAxis = 2;
@@ -26,7 +26,7 @@ Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &ver
     QList<int> leftVertexIndices;
     QList<int> rightVertexIndices;
     splitPoints(vertexIndices, vertices, splitAxis, splitPos, leftVertexIndices, rightVertexIndices);
-    if (leftVertexIndices.isEmpty()) {
+    if (leftVertexIndices.isEmpty() || rightVertexIndices.isEmpty()) {
         return new NodeLeaf(vertexIndices, vertices);
     }
 
@@ -36,32 +36,34 @@ Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &ver
 }
 
 void
-KDTree::findRange(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, QVector3D minVertex, QVector3D maxVertex) {
-    QVector3D minPoint = QVector3D(FLT_MIN, FLT_MIN, FLT_MIN);
-    QVector3D maxPoint = QVector3D(FLT_MAX, FLT_MAX, FLT_MAX);
-    for (int &vertexIndex : vertexIndices)
+KDTree::findRange(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, QVector3D &minVertex, QVector3D &maxVertex) {
+    QVector3D min = QVector3D(FLT_MAX, FLT_MAX, FLT_MAX);
+    QVector3D max = QVector3D(FLT_MIN, FLT_MIN, FLT_MIN);
+    for (int const &vertexIndex : vertexIndices)
         for (int axis = 0; axis < 3; axis++) {
             const float value = vertices[vertexIndex][axis];
-            if (value < minPoint[axis])
-                minPoint[axis] = value;
-            if (value > maxPoint[axis])
-                maxPoint[axis] = value;
+            if (value < min[axis]) {
+                min[axis] = value;
+            }
+            if (value > max[axis]) {
+                max[axis] = value;
+            }
         }
-    minVertex = QVector3D(minPoint[0], minPoint[1], minPoint[2]);
-    maxVertex = QVector3D(maxPoint[0], maxPoint[1], maxPoint[2]);
+    minVertex = QVector3D(min[0], min[1], min[2]);
+    maxVertex = QVector3D(max[0], max[1], max[2]);
 }
 
 void
-KDTree::splitPoints(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int axis, const float axisPos, QList<int> leftVertexIndices,
-                    QList<int> rightVertexIndices) {
+KDTree::splitPoints(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int axis, const float axisPos, QList<int> &leftVertexIndices,
+                    QList<int> &rightVertexIndices) {
     leftVertexIndices.clear();
     rightVertexIndices.clear();
 
-    for (int vertexIndex : vertexIndices) {
+    for (const int &vertexIndex : vertexIndices) {
         if (vertices[vertexIndex][axis] < axisPos) {
-            leftVertexIndices.append(vertexIndex);
+            leftVertexIndices << vertexIndex;
         } else {
-            rightVertexIndices.append(vertexIndex);
+            rightVertexIndices << vertexIndex;
         }
     }
 }

@@ -1,4 +1,4 @@
-#include <QtCore/QTextStream>
+#include <QTextStream>
 #include "ObjReader.h"
 #include <QDebug>
 #include <QVector2D>
@@ -102,12 +102,6 @@ bool ObjReader::parseFace(QString &line, QVector<int> *faceVertexIndices, QVecto
             if (!ok)
                 return false;
             faceVertexIndices->append(vertexIndex);
-        }
-        if (s_indicesForFaceVertex.size() > 1) {
-            int textureVertexIndex = s_indicesForFaceVertex[1].toInt(&ok);
-            if (!ok)
-                return false;
-            faceTextureVertexIndices->append(textureVertexIndex);
         }
     }
     return true;

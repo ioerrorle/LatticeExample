@@ -2,8 +2,8 @@
 #include <QDebug>
 #include <QVector3D>
 #include <QVector>
-#include <QtCore/QCoreApplication>
-#include <QtCore/QCommandLineParser>
+#include <QCoreApplication>
+#include <QCommandLineParser>
 #include <src/geometry/Geometry.h>
 #include <src/geometry/GeoTools.h>
 #include <src/lattice/LatticeDeform.h>

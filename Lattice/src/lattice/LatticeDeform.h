@@ -11,7 +11,7 @@ public:
     static Geometry deform(Geometry restBody, Geometry deformedBody, Geometry bodyToDeform, float radius);
 
 protected:
-    static QVector<float> calculateTransformationWeights(QVector3D &baseVertex, float metaballRadius, QVector<QVector3D> &verticesToTransform);
+    static QVector<float> calculateTransformationWeights(const QVector3D &baseVertex, const QVector<QVector3D> &verticesToTransform, float metaballRadius);
 };
 
 

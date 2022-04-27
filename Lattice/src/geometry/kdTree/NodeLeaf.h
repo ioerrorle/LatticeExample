@@ -1,14 +1,14 @@
 #ifndef LATTICEEXAMPLE_NODELEAF_H
 #define LATTICEEXAMPLE_NODELEAF_H
 
-#include <QtCore/QVector>
-#include <QtCore/QList>
+#include <QVector>
+#include <QList>
 #include "Node.h"
 
 class NodeLeaf : public Node {
 
 public:
-    NodeLeaf(QList<int> &vertexIndices, const QVector<QVector3D> &vertices);
+    NodeLeaf(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices);
 
     void
     findVerticesInRadius(const QVector3D &baseVertex, const float &radiusSquared,

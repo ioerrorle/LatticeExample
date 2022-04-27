@@ -1,5 +1,5 @@
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QFile>
+#include <QTextStream>
 #include "ObjWriter.h"
 
 bool ObjWriter::writeGeometry(QString &path, Geometry &geometry, QString *errorMessage) {
@@ -23,9 +23,10 @@ bool ObjWriter::writeGeometry(QString &path, Geometry &geometry, QString *errorM
         QVector<int> faceVertexIndices = geometry.faceVertexIndices[faceIndex];
         QVector<int> faceTextureVertexIndices = geometry.faceTextureVertexIndices[faceIndex];
         for (int vertexIndex = 0; vertexIndex < faceVertexIndices.size(); vertexIndex++) {
-            stream << " " << faceVertexIndices[vertexIndex] << "/" << faceTextureVertexIndices[vertexIndex];
+            stream << " " << faceVertexIndices[vertexIndex];
         }
         stream << "\n";
     }
     file.close();
+    return true;
 }

@@ -1,8 +1,8 @@
 #ifndef LATTICEEXAMPLE_OBJREADER_H
 #define LATTICEEXAMPLE_OBJREADER_H
 
-#include <QtCore/QVector>
-#include <QtGui/QVector3D>
+#include <QVector>
+#include <QVector3D>
 #include <src/geometry/Geometry.h>
 #include <QFile>
 

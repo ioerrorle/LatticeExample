@@ -8,13 +8,13 @@
 class KDTree {
 public:
     static Node *buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf);
-private:
-    static void
-    findRange(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, QVector3D minVertex, QVector3D maxVertex);
 
     static void
-    splitPoints(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int axis, const float axisPos, QList<int> leftVertexIndices,
-                QList<int> rightVertexIndices);
+    findRange(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, QVector3D &minVertex, QVector3D &maxVertex);
+
+    static void
+    splitPoints(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int axis, const float axisPos, QList<int> &leftVertexIndices,
+                QList<int> &rightVertexIndices);
 };
 
 

@@ -1,7 +1,6 @@
 #ifndef LATTICEEXAMPLE_GEOTOOLS_H
 #define LATTICEEXAMPLE_GEOTOOLS_H
 
-
 #include <QVector3D>
 #include <QVector>
 #include <src/geometry/Geometry.h>

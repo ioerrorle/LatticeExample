@@ -1,5 +1,5 @@
 #include "NodeLeaf.h"
-NodeLeaf::NodeLeaf(QList<int> &vertexIndices, const QVector<QVector3D> &vertices) : subsetVertexIndices(vertexIndices.toVector()) {
+NodeLeaf::NodeLeaf(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices) : subsetVertexIndices(vertexIndices.toVector()) {
     const int size = subsetVertexIndices.size();
     subsetVertices.resize(size);
     for (int i = 0; i < size; i++) {
