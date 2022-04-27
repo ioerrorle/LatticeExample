@@ -4,8 +4,10 @@
 #include "NodeInner.h"
 #include <QDebug>
 
-Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf) {
+Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf, int *numOfLeaves) {
     if (vertexIndices.size() <= maxNumberOfPointsInLeaf) {
+        if (numOfLeaves != nullptr)
+            ++*numOfLeaves;
         return new NodeLeaf(vertexIndices, vertices);
     }
 
@@ -27,11 +29,13 @@ Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &ver
     QList<int> rightVertexIndices;
     splitPoints(vertexIndices, vertices, splitAxis, splitPos, leftVertexIndices, rightVertexIndices);
     if (leftVertexIndices.isEmpty() || rightVertexIndices.isEmpty()) {
+        if (numOfLeaves != nullptr)
+            ++*numOfLeaves;
         return new NodeLeaf(vertexIndices, vertices);
     }
 
-    const Node *childLeft = buildTree(leftVertexIndices, vertices, maxNumberOfPointsInLeaf);
-    const Node *childRight = buildTree(rightVertexIndices, vertices, maxNumberOfPointsInLeaf);
+    const Node *childLeft = buildTree(leftVertexIndices, vertices, maxNumberOfPointsInLeaf, numOfLeaves);
+    const Node *childRight = buildTree(rightVertexIndices, vertices, maxNumberOfPointsInLeaf, numOfLeaves);
     return new NodeInner(childLeft, childRight, splitAxis, splitPos);
 }
 

@@ -11,6 +11,8 @@ public:
 
 private slots:
     void test_points_split();
+    void test_kd_tree();
+    void test_kd_tree_with_zeros();
     void test_find_closest_in_radius();
 
 };
@@ -36,6 +38,26 @@ void LatticeAlgoTest::test_points_split()
    KDTree::splitPoints(indices, vertices.toVector(), 0, 0.5, left, right);
    QVERIFY(left.size() == 2);
    QVERIFY(right.size() == 2);
+}
+
+void LatticeAlgoTest::test_kd_tree_with_zeros() {
+    QList<int> indices;
+    indices << 0 << 1 << 2 << 3;
+    QList<QVector3D> vertices;
+    vertices << QVector3D(0,0,0) << QVector3D(0,0,0) << QVector3D(0,0,0) << QVector3D(0,0,0);
+    int numOfLeaves = 0;
+    KDTree::buildTree(indices, vertices.toVector(), 1, &numOfLeaves);
+    QVERIFY(numOfLeaves == 1);
+}
+
+void LatticeAlgoTest::test_kd_tree() {
+    QList<int> indices;
+    indices << 0 << 1 << 2 << 3;
+    QList<QVector3D> vertices;
+    vertices << QVector3D(0,0,0) << QVector3D(1,0,0) << QVector3D(0,1,0) << QVector3D(1,1,0);
+    int numOfLeaves = 0;
+    KDTree::buildTree(indices, vertices.toVector(), 1, &numOfLeaves);
+    QVERIFY(numOfLeaves == 4);
 }
 
 void LatticeAlgoTest::test_find_closest_in_radius()
