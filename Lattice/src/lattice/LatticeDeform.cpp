@@ -11,39 +11,54 @@ Geometry LatticeDeform::deform(Geometry restBody, Geometry deformedBody, Geometr
     QVector<QVector<int>> deformedGeometryFaceVertexIndices(bodyToDeform.faceVertexIndices);
     QVector<QVector<int>> deformedGeometryFaceTextureVertexIndices(bodyToDeform.faceTextureVertexIndices);
 
-    restBody.getKdTree();
+    Node *tree = restBody.getKdTree();
 
     QElapsedTimer timer;
     timer.start();
 
+    bool result = deformVertices(restBody.vertices, tree, deformedBody.vertices, bodyToDeform.vertices, deformedGeometryVertices, radius*radius);
+
+    qDebug() << "Lattice took" << timer.elapsed() << "milliseconds";
+
+    if (result)
+        return Geometry(deformedGeometryVertices, deformedGeometryTextureVertices, deformedGeometryFaceVertexIndices, deformedGeometryFaceTextureVertexIndices);
+    else
+        return Geometry();
+}
+
+bool LatticeDeform::deformVertices(const QVector<QVector3D> &restBodyVertices, Node *tree, const QVector<QVector3D> &deformedBodyVertices, const QVector<QVector3D> &bodyToDeformVertices, QVector<QVector3D> &deformedGeometryVertices, float radiusSquared) {
+    if (restBodyVertices.size() != deformedBodyVertices.size())
+        return false;
+
+    if (bodyToDeformVertices.size() != deformedGeometryVertices.size())
+        return false;
 
     for (int currentVertexIndexToDeform = 0;
-        currentVertexIndexToDeform < bodyToDeform.vertices.size(); currentVertexIndexToDeform++) {
-        QVector3D currentVertexToDeform = bodyToDeform.vertices[currentVertexIndexToDeform];
+        currentVertexIndexToDeform < bodyToDeformVertices.size(); currentVertexIndexToDeform++) {
+        QVector3D currentVertexToDeform = bodyToDeformVertices[currentVertexIndexToDeform];
 
         QVector<int> forceVertexIndices;
         QVector<QVector3D> forceVertices;
 
-        restBody.getKdTree()->findVerticesInRadius(currentVertexToDeform, pow(radius, 2), forceVertexIndices, forceVertices);
+        tree->findVerticesInRadius(currentVertexToDeform, radiusSquared, forceVertexIndices, forceVertices);
 
-        QVector<float> weightsForForceVertices = calculateTransformationWeights(currentVertexToDeform, forceVertices, radius*radius);
+        QVector<float> weightsForForceVertices = calculateTransformationWeights(currentVertexToDeform, forceVertices, radiusSquared);
         for (int i = 0; i < forceVertexIndices.size(); i++) {
             int forceVertexIndex = forceVertexIndices[i];
-            QVector3D forceVertex = restBody.vertices[forceVertexIndex];
-            QVector3D deformedForceVertex = deformedBody.vertices[forceVertexIndex];
+            QVector3D forceVertex = restBodyVertices[forceVertexIndex];
+            QVector3D deformedForceVertex = deformedBodyVertices[forceVertexIndex];
             float transformWeight = weightsForForceVertices[i];
             QVector3D transformationVector = (forceVertex - deformedForceVertex) * transformWeight;
             deformedGeometryVertices[currentVertexIndexToDeform] -= transformationVector;
         }
     }
-
-    qDebug() << "Lattice took" << timer.elapsed() << "milliseconds";
-
-    return Geometry(deformedGeometryVertices, deformedGeometryTextureVertices, deformedGeometryFaceVertexIndices, deformedGeometryFaceTextureVertexIndices);
+    return true;
 }
 
 QVector<float> LatticeDeform::calculateTransformationWeights(const QVector3D &baseVertex, const QVector<QVector3D> &verticesToTransform, float metaballRadiusSquared) {
     QVector<float> result;
+    if (metaballRadiusSquared == 0)
+        return QVector<float>(verticesToTransform.size(), 0);
     float sumWeight = 0;
     for (QVector3D vertexToTransform : verticesToTransform) {
         float distanceSquaredNormalized = (baseVertex - vertexToTransform).lengthSquared()/metaballRadiusSquared;
@@ -52,6 +67,8 @@ QVector<float> LatticeDeform::calculateTransformationWeights(const QVector3D &ba
         result.append(weight);
         sumWeight += weight;
     }
+    if (sumWeight == 0)
+        return QVector<float>(verticesToTransform.size(), 0);
 
     for (int i = 0; i < result.size(); i++) {
         result[i] = result[i] / sumWeight;

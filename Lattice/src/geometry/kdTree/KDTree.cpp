@@ -4,7 +4,7 @@
 #include "NodeInner.h"
 #include <QDebug>
 
-Node *KDTree::buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf, int *numOfLeaves) {
+Node *KDTree::buildTree(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf, int *numOfLeaves) {
     if (vertexIndices.size() <= maxNumberOfPointsInLeaf) {
         if (numOfLeaves != nullptr)
             ++*numOfLeaves;

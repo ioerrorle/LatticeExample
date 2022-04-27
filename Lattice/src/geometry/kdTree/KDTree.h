@@ -7,7 +7,7 @@
 
 class KDTree {
 public:
-    static Node *buildTree(QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf, int *numOfLeaves = nullptr);
+    static Node *buildTree(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, int maxNumberOfPointsInLeaf, int *numOfLeaves = nullptr);
 
     static void
     findRange(const QList<int> &vertexIndices, const QVector<QVector3D> &vertices, QVector3D &minVertex, QVector3D &maxVertex);
