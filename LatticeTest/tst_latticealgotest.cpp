@@ -38,6 +38,22 @@ void LatticeAlgoTest::test_points_split()
    KDTree::splitPoints(indices, vertices.toVector(), 0, 0.5, left, right);
    QVERIFY(left.size() == 2);
    QVERIFY(right.size() == 2);
+
+   vertices.clear();
+   left.clear();
+   right.clear();
+   vertices << QVector3D(0,0,0) << QVector3D(0,0,0) << QVector3D(0,0,0) << QVector3D(0,0,0);
+   KDTree::splitPoints(indices, vertices.toVector(), 0, 0, left, right);
+   QVERIFY(left.size() == 0 || right.size() == 0);
+
+   indices.clear();
+   vertices.clear();
+   left.clear();
+   right.clear();
+   indices << 0;
+   vertices << QVector3D(0,0,0);
+   KDTree::splitPoints(indices, vertices.toVector(), 0, 0, left, right);
+   QVERIFY(left.size() == 0 || right.size() == 0);
 }
 
 void LatticeAlgoTest::test_kd_tree_with_zeros() {
